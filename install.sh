@@ -25,9 +25,9 @@ fi
 
 # 2. Package verification
 if ! command -v fail2ban-client >/dev/null 2>&1; then
-    echo -e "${YELLOW}[INFO] Fail2Ban not detected. Installing fail2ban & iptables...${NC}"
+    echo -e "${YELLOW}[INFO] Fail2Ban not detected. Installing fail2ban, iptables & python3-systemd...${NC}"
     apt-get update -qq
-    apt-get install -y fail2ban iptables
+    apt-get install -y fail2ban iptables python3-systemd
 fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

@@ -98,14 +98,23 @@ Monitoring systems (e.g. UptimeRobot, StatusCake, Pingdom) perform frequent synt
 
 ## 🚀 Quick Start / Deployment
 
-### 1. Clone Repository
+> 🇫🇷 **En français :** Un guide direct est disponible dans [MODE_D_EMPLOI.md](MODE_D_EMPLOI.md).
+
+### 1. Prerequisites (Fresh Debian / Ubuntu)
+On minimal Debian installations, ensure `git` is installed:
+```bash
+apt update && apt install -y git
+# or with sudo: sudo apt update && sudo apt install -y git
+```
+
+### 2. Clone Repository
 ```bash
 git clone https://github.com/arthas95/fail2ban-security-suite.git
 cd fail2ban-security-suite
 ```
 
-### 2. Configure Whitelist (Crucial)
-Before applying the configuration, ensure your management IP and server IP are whitelisted to prevent accidental lockouts:
+### 3. Configure Whitelist (Optional)
+Before applying the configuration, you can whitelist your management IP to prevent accidental lockouts:
 
 ```bash
 # Edit config/jail.local.template
@@ -115,19 +124,21 @@ Update the `ignoreip` line:
 ```ini
 ignoreip = 127.0.0.1/8 ::1 <YOUR_OFFICE_OR_HOME_IP> <SERVER_PUBLIC_IP>
 ```
+*(The automated installer will also auto-detect your server's public IP).*
 
-### 3. Run Automated Installer
+### 4. Run Automated Installer
 ```bash
 chmod +x install.sh
 sudo ./install.sh
 ```
 
 The installer will:
-1. Copy all custom filters to `/etc/fail2ban/filter.d/`.
-2. Deploy modular jail configurations into `/etc/fail2ban/jail.d/`.
-3. Validate configuration syntax (`fail2ban-client -t`).
-4. Enable and restart `fail2ban.service`.
-5. Install the live status dashboard utility (`f2b-status`).
+1. Automatically install `fail2ban`, `iptables`, and `python3-systemd` if missing.
+2. Copy all custom filters to `/etc/fail2ban/filter.d/`.
+3. Deploy modular jail configurations into `/etc/fail2ban/jail.d/`.
+4. Validate configuration syntax (`fail2ban-client -t`).
+5. Enable and restart `fail2ban.service`.
+6. Install the live status dashboard utility (`f2b-status`).
 
 ---
 
