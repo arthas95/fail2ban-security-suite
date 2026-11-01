@@ -1,0 +1,39 @@
+name: Lint and Validate Configuration
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Fail2Ban & Dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y fail2ban iptables
+
+      - name: Validate Shell Scripts
+        run: |
+          bash -n install.sh
+          bash -n uninstall.sh
+          bash -n scripts/f2b-status.sh
+          bash -n scripts/test-filters.sh
+
+      - name: Run Filter Test Suite
+        run: |
+          chmod +x scripts/test-filters.sh
+          ./scripts/test-filters.sh
+
+      - name: Validate Fail2Ban Config Syntax
+        run: |
+          sudo cp config/filter.d/*.conf /etc/fail2ban/filter.d/
+          sudo cp config/jail.d/*.conf /etc/fail2ban/jail.d/
+          sudo cp config/jail.local.template /etc/fail2ban/jail.local
+          sudo sed -i 's|<YOUR_ADMIN_IP>||g; s|<YOUR_SERVER_PUBLIC_IP>||g' /etc/fail2ban/jail.local
+          sudo fail2ban-client -t

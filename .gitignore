@@ -1,0 +1,12 @@
+# Operating System & Editor Files
+.DS_Store
+Thumbs.db
+*.swp
+*.bak
+*~
+.idea/
+.vscode/
+
+# Local sensitive overrides
+*.local
+*.log

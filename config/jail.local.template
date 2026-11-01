@@ -1,0 +1,26 @@
+# Fail2Ban Local Configuration Template
+# Part of the Fail2Ban Security Suite
+# https://github.com/arthas95/fail2ban-security-suite
+
+[DEFAULT]
+# IP Whitelisting: Never ban localhost, internal subnets, or trusted management IPs.
+# Space or comma-separated list of IPv4/IPv6 addresses or CIDR blocks.
+# IMPORTANT: Replace YOUR_ADMIN_IP and YOUR_SERVER_PUBLIC_IP with your actual IPs!
+ignoreip = 127.0.0.1/8 ::1 <YOUR_ADMIN_IP> <YOUR_SERVER_PUBLIC_IP>
+
+# Base timing policies
+bantime  = 1h
+findtime = 15m
+maxretry = 5
+
+# Progressive ban time multiplier (Fail2ban v0.11+)
+# Exponentially scales ban time for recurrent attackers: 1h -> 2h -> 4h -> 8h ... up to 4 weeks
+bantime.increment = true
+bantime.factor = 1
+bantime.maxtime = 4w
+bantime.overalljails = true
+
+# Firewall backend actions
+banaction = iptables-multiport
+banaction_allports = iptables-allports
+backend = auto
