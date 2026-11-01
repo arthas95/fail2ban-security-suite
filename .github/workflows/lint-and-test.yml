@@ -16,7 +16,7 @@ jobs:
       - name: Install Fail2Ban & Dependencies
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y fail2ban iptables
+          sudo apt-get install -y fail2ban iptables python3-systemd
 
       - name: Validate Shell Scripts
         run: |
@@ -32,8 +32,20 @@ jobs:
 
       - name: Validate Fail2Ban Config Syntax
         run: |
+          sudo mkdir -p /var/log/apache2 /var/log/squid
+          sudo touch /var/log/mail.log \
+                     /var/log/apache2/error.log \
+                     /var/log/apache2/access.log \
+                     /var/log/squid/access.log \
+                     /var/log/fail2ban.log \
+                     /var/log/syslog
           sudo cp config/filter.d/*.conf /etc/fail2ban/filter.d/
           sudo cp config/jail.d/*.conf /etc/fail2ban/jail.d/
           sudo cp config/jail.local.template /etc/fail2ban/jail.local
           sudo sed -i 's|<YOUR_ADMIN_IP>||g; s|<YOUR_SERVER_PUBLIC_IP>||g' /etc/fail2ban/jail.local
           sudo fail2ban-client -t
+
+      - name: Test Automated Installer
+        run: |
+          chmod +x install.sh
+          sudo ./install.sh

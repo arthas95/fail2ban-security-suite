@@ -67,7 +67,18 @@ if [ -f "$SCRIPT_DIR/scripts/f2b-status.sh" ]; then
     chmod +x /usr/local/bin/f2b-status
 fi
 
-# 5. Configuration syntax verification
+# 5. Ensure standard log directories & placeholder log files exist
+# This allows Fail2Ban to initialize cleanly on minimal systems (e.g. Debian 12 / Ubuntu
+# where rsyslog is not installed by default, or services haven't created logs yet)
+mkdir -p /var/log/apache2 /var/log/squid
+touch /var/log/mail.log \
+      /var/log/apache2/error.log \
+      /var/log/apache2/access.log \
+      /var/log/squid/access.log \
+      /var/log/fail2ban.log \
+      /var/log/syslog
+
+# 6. Configuration syntax verification
 echo -e "${YELLOW}[*] Validating Fail2Ban configuration syntax...${NC}"
 if fail2ban-client -t; then
     echo -e "${GREEN}[+] Configuration syntax is VALID!${NC}"
@@ -76,7 +87,7 @@ else
     exit 1
 fi
 
-# 6. Enable and restart service
+# 7. Enable and restart service
 echo -e "${GREEN}[+] Enabling and restarting Fail2Ban service...${NC}"
 systemctl enable fail2ban
 systemctl restart fail2ban
@@ -84,7 +95,7 @@ systemctl restart fail2ban
 echo -e "${GREEN}[+] Waiting for jails to initialize...${NC}"
 sleep 2
 
-# 7. Print summary
+# 8. Print summary
 if [ -f /usr/local/bin/f2b-status ]; then
     /usr/local/bin/f2b-status
 fi
